@@ -25,49 +25,67 @@ function drawCanvasBorder(context, width, height, borderColor = 'black', borderW
 const defaultSquareSize = 50;
 const defaultSquareColor = 'blue';
 
-let squarePositionX = (canvas.width - defaultSquareSize) / 2; // center horizontally
-let squarePositionY = (canvas.height - defaultSquareSize) / 2; // center vertically
+const squares = [];
 
-// Draw the square
-canvasContext.fillStyle = defaultSquareColor;
-canvasContext.fillRect(squarePositionX, squarePositionY, defaultSquareSize, defaultSquareSize);
+function createSquare() {
+  const randomAngle = Math.random() * Math.PI * 2;
+  const randomSquareSpeed = 1 + Math.random() * 2;
+  const randomColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
 
-// initiate square movement in random direction
-const randomAngle = Math.random() * Math.PI * 2;
-const squareSpeed = 2;
-let squareVelocityX = Math.cos(randomAngle) * squareSpeed;
-let squareVelocityY = Math.sin(randomAngle) * squareSpeed;
+  return {
+    x: Math.random() * (canvas.width - defaultSquareSize),
+    y: Math.random() * (canvas.height - defaultSquareSize),
+    size: defaultSquareSize,
+    color: randomColor,
+    velocityX: Math.cos(randomAngle) * randomSquareSpeed,
+    velocityY: Math.sin(randomAngle) * randomSquareSpeed,
+  };
+}
+
+function drawSquare(square) {
+  canvasContext.fillStyle = square.color;
+  canvasContext.fillRect(square.x, square.y, square.size, square.size);
+}
 
 // draw the square in a new position
-function updateSquarePosition() {
+function spawnSquares(numSquaresToGenerate = 1) {
+  while (squares.length < numSquaresToGenerate) {
+    squares.push(createSquare());
+  }
+
   // Clear the canvas
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Update square position
-  squarePositionX += squareVelocityX;
-  squarePositionY += squareVelocityY;
+  for (const square of squares) {
+    // Update square position
+    square.x += square.velocityX;
+    square.y += square.velocityY;
 
-  // Check for collisions with the canvas edges and reverse direction if necessary
-  if (squarePositionX <= 0 || squarePositionX + defaultSquareSize >= canvas.width) {
-    squareVelocityX = -squareVelocityX; // Reverse horizontal direction
-  }
-  if (squarePositionY <= 0 || squarePositionY + defaultSquareSize >= canvas.height) {
-    squareVelocityY = -squareVelocityY; // Reverse vertical direction
-  }
+    // Check for collisions with the canvas edges and reverse direction if necessary
+    if (square.x <= 0 || square.x + square.size >= canvas.width) {
+      square.velocityX = -square.velocityX; // Reverse horizontal direction
+    }
+    if (square.y <= 0 || square.y + square.size >= canvas.height) {
+      square.velocityY = -square.velocityY; // Reverse vertical direction
+    }
 
-  // draw square
-  canvasContext.fillRect(squarePositionX, squarePositionY, defaultSquareSize, defaultSquareSize);
+    // draw square
+    drawSquare(square);
+  }
 
   // Request the next animation frame
   // main draw call?
-  requestAnimationFrame(updateSquarePosition);
-  
+  requestAnimationFrame(() => spawnSquares(numSquaresToGenerate));
+
   // Draw the canvas border and text
   drawCanvasBorder(canvasContext, canvas.width, canvas.height, canvasBorderColor, canvasBorder);
-  canvasContext.fillText('heyo from code to canvas', 200, 200);
+
+  canvasContext.font = '20px Arial';
+  canvasContext.fillStyle = 'blue';
+  canvasContext.fillText('heyo from code to canvas', 150, 150);
 }
 
 // Start the animation
-updateSquarePosition();
+spawnSquares(1005);
 
 

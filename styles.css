@@ -1,22 +1,29 @@
 body {
   margin: 0;
   min-height: 100vh;
-  display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
 }
 
-.appTitle {
-  horizontal-align: center;
-  text-align: center;
+.app-shell {
+  margin-top: 100px;
+}
 
+.appTitle {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: #4da3ff;
+  font-family: 'Inter', sans-serif;
 }
 
 canvas {
   display: block;
   margin: 0 auto;
-  max-width: 100%;
+  text-align: center;
+  color: #4da3ff;
+  font-size: 1.5rem;
 }
-
-
