@@ -3,11 +3,13 @@ const canvasContext = canvas.getContext("2d");
 
 const target_frame_rate = 60;
 const draw_time_target = 1000 / target_frame_rate;
-const table_thing = '(╯°□°)╯︵ ┻━┻'
+const table_flip = '(╯°□°)╯︵ ┻━┻'
 
 let draw_count = 0;
 let last_draw_time = performance.now();
 let current_time = Date.now();
+
+// todo: 
 
 // game loop?
 function draw() {
@@ -29,13 +31,13 @@ function draw() {
   draw_fps(canvas.width - 45, 10);
 
   // rec example
-  canvasContext.fillStyle = "red";
-  canvasContext.fillRect(0, 0, 10, 10);
+  canvasContext.fillStyle = "lightblue";
+  canvasContext.fillRect(10, 10, 20, 20);
 
   // draw table flip
   canvasContext.fillStyle = "black";
   canvasContext.font = "10px Arial";
-  canvasContext.fillText(table_thing, 10, 100);
+  canvasContext.fillText(table_flip, 10, 100);
 
   requestAnimationFrame(draw);
 }
@@ -43,10 +45,7 @@ function draw() {
 // starts game loop
 draw();
 
-
-
 // function things
-
 function draw_time_stats() {
 
   // show draw_target_time
@@ -64,12 +63,10 @@ function draw_time_stats() {
   canvasContext.font = "8px Arial";
   canvasContext.fillText(`Delta time: ${delta_time.toFixed(2)} ms`, 10, 15);
 
-  // draw current time
+  // format current time as a human-readable string
   canvasContext.fillStyle = "black";
   canvasContext.font = "8px Arial";
-  // format current time as a human-readable string
-  const current_time_string = new Date(current_time).toLocaleTimeString();
-  canvasContext.fillText(`Current time: ${current_time_string}`, 10, 45);
+  canvasContext.fillText(`Current time: ${new Date(current_time).toLocaleTimeString()}`, 10, 45);
 }
 
 function draw_fps(x = 10, y = 75) {
