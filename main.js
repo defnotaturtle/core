@@ -3,6 +3,7 @@ const canvasContext = canvas.getContext("2d");
 
 const target_frame_rate = 60;
 const draw_time_target = 1000 / target_frame_rate;
+const table_thing = '(╯°□°)╯︵ ┻━┻'
 
 let draw_count = 0;
 let last_draw_time = performance.now();
@@ -30,6 +31,11 @@ function draw() {
   // rec example
   canvasContext.fillStyle = "red";
   canvasContext.fillRect(0, 0, 10, 10);
+
+  // draw table flip
+  canvasContext.fillStyle = "black";
+  canvasContext.font = "10px Arial";
+  canvasContext.fillText(table_thing, 10, 100);
 
   requestAnimationFrame(draw);
 }
