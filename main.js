@@ -10,7 +10,7 @@ function draw() {
 
   // rec example
   canvasContext.fillStyle = "red";
-  canvasContext.fillRect(100, 100, 200, 200);
+  canvasContext.fillRect(0, 0, 10, 10);
 
   requestAnimationFrame(draw);
 }
