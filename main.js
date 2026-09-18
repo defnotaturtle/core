@@ -5,6 +5,7 @@ const target_frame_rate = 60;
 const draw_time_target = 1000 / target_frame_rate;
 const table_flip = '(╯°□°)╯︵ ┻━┻'
 
+let prime_update_speed = 1000; // ms
 let candidates = [2];
 let multiples = [];
 let primes = [];
@@ -12,6 +13,9 @@ let primes = [];
 let draw_count = 0;
 let last_draw_time = performance.now();
 let current_time = Date.now();
+let delta_time = 0;
+
+const start_time = Date.now();
 
 // game loop?
 function draw() {
@@ -42,33 +46,44 @@ function draw() {
   canvasContext.fillText(table_flip, 10, 200);
 
   // todo: move logic
-  step_primes();
+
+  // call once per second
+  if ((delta_time * 1000) % prime_update_speed === 0) {
+    step_primes();
+  }
 
 
-  // print candidate list
+  // print top ten candidates in descending order
+  const topTenCandidates = candidates.slice(-10).sort((a, b) => b - a);
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Candidates: ${candidates.join(", ")}`, 10, 90);
+  canvasContext.fillText(`Top 10 candidates: ${topTenCandidates.join(", ")}`, 10, 80);
 
-  // print prime list
+  // print top ten primes in descending order
+  const topTenPrimes = primes.slice(-10).sort((a, b) => b - a);
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Primes: ${primes.join(", ")}`, 10, 100);
+  canvasContext.fillText(`Top 10 primes: ${topTenPrimes.join(", ")}`, 10, 100);
 
   // print max candidate
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Max candidate: ${Math.max(...candidates)}`, 10, 110);
+  canvasContext.fillText(`Current candidate: ${Math.max(...candidates)}`, 10, 110);
 
-  // print max prime
+  // print prime count
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Max prime: ${Math.max(...primes)}`, 10, 120);
+  canvasContext.fillText(`Prime count:`, 10, 160);
+  canvasContext.fillStyle = "lightblue";
+  canvasContext.font = "18px Arial";
+  canvasContext.fillText(`${primes.length}`, 80, 160);
 
   // print first 10 primes
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
   canvasContext.fillText(`First 10 primes: ${primes.slice(0, 10).join(", ")}`, 10, 130);
+
+
 
   requestAnimationFrame(draw);
 }
@@ -112,7 +127,7 @@ function step_primes() {
 
   // add multiples
   const self = max_candidate * max_candidate;
-  primes.map( prime => prime * max_candidate).forEach( multiple => multiples.push(multiple));
+  primes.map(prime => prime * max_candidate).forEach(multiple => multiples.push(multiple));
   multiples.push(self);
 
   // filter primes
@@ -121,6 +136,7 @@ function step_primes() {
   }
 
   // todo: factorization list
+
 
   // increment candidates
   candidates.push(new_candidate);
