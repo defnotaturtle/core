@@ -5,17 +5,13 @@ const target_frame_rate = 60;
 const draw_time_target = 1000 / target_frame_rate;
 const table_flip = '(╯°□°)╯︵ ┻━┻'
 
+let candidates = [2];
+let multiples = [];
+let primes = [];
+
 let draw_count = 0;
 let last_draw_time = performance.now();
 let current_time = Date.now();
-
-// todo: 
-// set canvas width and height
-// canvasWidth = 128;
-// canvasHeight = 128;
-
-// canvas.width = canvasWidth;
-// canvas.height = canvasHeight;
 
 // game loop?
 function draw() {
@@ -43,13 +39,44 @@ function draw() {
   // draw table flip
   canvasContext.fillStyle = "white";
   canvasContext.font = "10px Arial";
-  canvasContext.fillText(table_flip, 10, 100);
+  canvasContext.fillText(table_flip, 10, 200);
+
+  // todo: move logic
+  step_primes();
+
+
+  // print candidate list
+  canvasContext.fillStyle = "white";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(`Candidates: ${candidates.join(", ")}`, 10, 90);
+
+  // print prime list
+  canvasContext.fillStyle = "white";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(`Primes: ${primes.join(", ")}`, 10, 100);
+
+  // print max candidate
+  canvasContext.fillStyle = "white";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(`Max candidate: ${Math.max(...candidates)}`, 10, 110);
+
+  // print max prime
+  canvasContext.fillStyle = "white";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(`Max prime: ${Math.max(...primes)}`, 10, 120);
+
+  // print first 10 primes
+  canvasContext.fillStyle = "white";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(`First 10 primes: ${primes.slice(0, 10).join(", ")}`, 10, 130);
 
   requestAnimationFrame(draw);
 }
 
 // starts game loop
 draw();
+
+
 
 // function things
 function draw_time_stats() {
@@ -73,6 +100,30 @@ function draw_time_stats() {
   canvasContext.fillStyle = "black";
   canvasContext.font = "8px Arial";
   canvasContext.fillText(`Current time: ${new Date(current_time).toLocaleTimeString()}`, 10, 45);
+
+}
+
+
+function step_primes() {
+
+  // get max candidate
+  const max_candidate = Math.max(...candidates);
+  const new_candidate = max_candidate + 1;
+
+  // add multiples
+  const self = max_candidate * max_candidate;
+  primes.map( prime => prime * max_candidate).forEach( multiple => multiples.push(multiple));
+  multiples.push(self);
+
+  // filter primes
+  if (!multiples.includes(max_candidate)) {
+    primes.push(max_candidate);
+  }
+
+  // todo: factorization list
+
+  // increment candidates
+  candidates.push(new_candidate);
 }
 
 function draw_fps(x = 10, y = 75) {
