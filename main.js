@@ -5,7 +5,7 @@ const target_frame_rate = 60;
 const draw_time_target = 1000 / target_frame_rate;
 const table_flip = '(╯°□°)╯︵ ┻━┻'
 
-let prime_update_speed = 1000; // ms
+let prime_update_speed = 500; // ms
 let candidates = [2];
 let multiples = [];
 let primes = [];
@@ -14,6 +14,7 @@ let draw_count = 0;
 let last_draw_time = performance.now();
 let current_time = Date.now();
 let delta_time = 0;
+
 
 const start_time = Date.now();
 
@@ -70,6 +71,11 @@ function draw() {
   canvasContext.font = "8px Arial";
   canvasContext.fillText(`Current candidate: ${Math.max(...candidates)}`, 10, 110);
 
+  // print first 10 primes
+  canvasContext.fillStyle = "white";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(`First 10 primes: ${primes.slice(0, 10).join(", ")}`, 10, 130);
+
   // print prime count
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
@@ -78,11 +84,10 @@ function draw() {
   canvasContext.font = "18px Arial";
   canvasContext.fillText(`${primes.length}`, 80, 160);
 
-  // print first 10 primes
+  // print primes found per second
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`First 10 primes: ${primes.slice(0, 10).join(", ")}`, 10, 130);
-
+  canvasContext.fillText(`Primes found per second: ${(primes.length / ((current_time - start_time) / 1000)).toFixed(2)}`, 10, 180);
 
 
   requestAnimationFrame(draw);
