@@ -10,6 +10,12 @@ let last_draw_time = performance.now();
 let current_time = Date.now();
 
 // todo: 
+// set canvas width and height
+// canvasWidth = 128;
+// canvasHeight = 128;
+
+// canvas.width = canvasWidth;
+// canvas.height = canvasHeight;
 
 // game loop?
 function draw() {
@@ -35,7 +41,7 @@ function draw() {
   canvasContext.fillRect(10, 10, 20, 20);
 
   // draw table flip
-  canvasContext.fillStyle = "black";
+  canvasContext.fillStyle = "white";
   canvasContext.font = "10px Arial";
   canvasContext.fillText(table_flip, 10, 100);
 
@@ -71,7 +77,7 @@ function draw_time_stats() {
 
 function draw_fps(x = 10, y = 75) {
   const fps = (1000 / delta_time).toFixed(2);
-  canvasContext.fillStyle = "black";
+  canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
   canvasContext.fillText(`FPS: ${fps}`, x, y);
 }

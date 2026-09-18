@@ -4,13 +4,37 @@
   <meta charset="utf-8">
   <title>Canvas Test</title>
   <style>
-    body { margin: 0; overflow: hidden; width: 100vw; height: 100vh; }
-    canvas { margin: 50px; border-style: dashed; }
+    :root {
+      --canvas-width: 128;
+      --canvas-height: 128;
+      --pixel-scale: 4;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: #111;
+    }
+
+    canvas {
+      display: block;
+      width: calc(var(--canvas-width) * var(--pixel-scale) * 1px);
+      height: calc(var(--canvas-height) * var(--pixel-scale) * 1px);
+      border: 2px dashed #666;
+      background: #000;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
   </style>
 </head>
 <body>
-  <!-- todo: scale canvas pixel perfectly -->
-  <canvas id="gameCanvas" width="128" height="128" ></canvas>
+  <canvas id="gameCanvas" width="128" height="128"></canvas>
 
   <script src="main.js"></script>
 </body>
