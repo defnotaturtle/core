@@ -48,6 +48,7 @@ let multiples = [];
 let primes = [];
 let filtered_candidates = [];
 let prime_magnitude = 0;
+let composite_magnitude = 0;
 
 let draw_count = 0;
 let last_draw_time = performance.now();
@@ -63,6 +64,9 @@ function reset() {
     candidates = [2];
     multiples = [];
     primes = [];
+    filtered_candidates = [];
+    prime_factorizations = [];
+
     draw_count = 0;
     last_draw_time = performance.now();
     current_time = Date.now();
@@ -227,6 +231,13 @@ function render() {
   canvasContext.font = "12px Arial";
   canvasContext.fillText(`${prime_magnitude}`, 120, 200);
 
+  canvasContext.fillStyle = "white";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(`Composite magnitude:`, 150, 50);
+  canvasContext.fillStyle = "lightblue";
+  canvasContext.font = "12px Arial";
+  canvasContext.fillText(`${composite_magnitude}`, 185, 70);
+
   // print prime_factorization
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
@@ -340,15 +351,21 @@ function step_primes() {
       factor_counts[factor] = (factor_counts[factor] || 0) + 1;
     });
 
+    let magnitude = 0;
     // create prime factorization string with exponents
     prime_factorization = Object.entries(factor_counts)
-      .map(([factor, count]) => (count > 1 ? `${factor}^${count}` : factor))
+      .map(([factor, count]) => {
+        magnitude += 1;
+        return count > 1 ? `${factor}^${count}` : factor;
+      })
       .join(" × ");
 
     prime_factorizations.push({
       number: max_candidate,
       factorization: prime_factorization,
     });
+
+    composite_magnitude = Math.max(composite_magnitude, magnitude);
   }
 
   // todo: factorization list
