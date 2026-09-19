@@ -18,7 +18,11 @@ window.addEventListener("keydown", (event) => {
 
   keys[key] = true;
 
-  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " ", "Space"].includes(event.key)) {
+  if (
+    ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " ", "Space"].includes(
+      event.key,
+    )
+  ) {
     event.preventDefault();
   }
 });
@@ -31,15 +35,18 @@ window.addEventListener("keyup", (event) => {
 
 const target_frame_rate = 60;
 const draw_time_target = 1000 / target_frame_rate;
-const table_flip = '(╯°□°)╯︵ ┻━┻'
+const table_flip = "(╯°□°)╯︵ ┻━┻";
 const prime_upgrade = 0.85;
 
+let prime_factorization = "";
 let delta_accumulator = 0;
-let prime_update_speed = 100; // ms
+let prime_update_speed = 500; // ms
 
+let prime_factorizations = [];
 let candidates = [2];
 let multiples = [];
 let primes = [];
+let filtered_candidates = [];
 let prime_magnitude = 0;
 
 let draw_count = 0;
@@ -75,19 +82,21 @@ function reset() {
 }
 
 function update() {
-
   // keyboard input to reset to default values
-  if (pressedOnce['r']) {
+  if (pressedOnce["r"]) {
     reset();
-    pressedOnce['r'] = false;
+    pressedOnce["r"] = false;
   }
 
   // draw/update count
   draw_count++;
   current_time = Date.now();
 
-  // todo: fix this :)
-  primes_found_per_second = (primes.length / ((current_time - start_time) / 1000)).toFixed(2);
+  // todo: fix this :) -> sync with reset() function
+  primes_found_per_second = (
+    primes.length /
+    ((current_time - start_time) / 1000)
+  ).toFixed(2);
 
   // calculate delta time
   delta_time = performance.now() - last_draw_time;
@@ -95,24 +104,24 @@ function update() {
   last_draw_time = performance.now();
 
   // call if delta_accumulator greater than prime_update_speed
-  if ((delta_accumulator) >= prime_update_speed) {
+  if (delta_accumulator >= prime_update_speed) {
     step_primes();
     delta_accumulator = 0;
   }
-
 }
 
 function render() {
-
   // clear
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-
 
   // print delta_time
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Delta time: ${delta_time.toFixed(2)} ms`, canvas.width - 80, 20);
-
+  canvasContext.fillText(
+    `Delta time: ${delta_time.toFixed(2)} ms`,
+    canvas.width - 80,
+    20,
+  );
 
   // draw FPS / time stats
   // draw_time_stats();
@@ -127,12 +136,15 @@ function render() {
   canvasContext.font = "10px Arial";
   canvasContext.fillText(table_flip, 10, 240);
 
-
   // print top five candidates in descending order
   const topFiveCandidates = candidates.slice(-5).sort((a, b) => b - a);
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Top 5 candidates: ${topFiveCandidates.join(", ")}`, 10, 80);
+  canvasContext.fillText(
+    `Top 5 candidates: ${topFiveCandidates.join(", ")}`,
+    10,
+    80,
+  );
 
   // print top five primes in descending order
   const topFivePrimes = primes.slice(-5).sort((a, b) => b - a);
@@ -148,22 +160,45 @@ function render() {
   // print prime update speed in seconds
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Prime update speed: ${(prime_update_speed / 1000).toFixed(2)} s`, 10, 140);
+  canvasContext.fillText(
+    `Prime update speed: ${(prime_update_speed / 1000).toFixed(2)} s`,
+    10,
+    140,
+  );
 
   // display progress bar for prime update speed
   progress_bar = (delta_accumulator / prime_update_speed) * progressBarWidth;
-  
+
   canvasContext.fillStyle = "gray";
-  canvasContext.fillRect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
+  canvasContext.fillRect(
+    progressBarX,
+    progressBarY,
+    progressBarWidth,
+    progressBarHeight,
+  );
   canvasContext.fillStyle = "lightblue";
-  canvasContext.fillRect(progressBarX, progressBarY, progress_bar, progressBarHeight);
+  canvasContext.fillRect(
+    progressBarX,
+    progressBarY,
+    progress_bar,
+    progressBarHeight,
+  );
   canvasContext.strokeStyle = "white";
-  canvasContext.strokeRect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
+  canvasContext.strokeRect(
+    progressBarX,
+    progressBarY,
+    progressBarWidth,
+    progressBarHeight,
+  );
 
   // print first 5 primes
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`First 5 primes: ${primes.slice(0, 5).join(", ")}`, 10, 130);
+  canvasContext.fillText(
+    `First 5 primes: ${primes.slice(0, 5).join(", ")}`,
+    10,
+    130,
+  );
 
   // print prime count
   canvasContext.fillStyle = "white";
@@ -176,7 +211,11 @@ function render() {
   // print primes found per second
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Primes found per second: ${primes_found_per_second}`, 10, 180);
+  canvasContext.fillText(
+    `Primes found per second: ${primes_found_per_second}`,
+    10,
+    180,
+  );
 
   // print prime magnitude - digit count of largest found prime
   const largest_prime = primes[primes.length - 1] || 0;
@@ -188,11 +227,41 @@ function render() {
   canvasContext.font = "12px Arial";
   canvasContext.fillText(`${prime_magnitude}`, 120, 200);
 
+  // print prime_factorization
+  canvasContext.fillStyle = "white";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(
+    `Prime factorization of ${Math.max(...filtered_candidates)}: ${prime_factorization}`,
+    10,
+    220,
+  );
+
+  // print top 5 prime factorizations as a vertical list with number and factorization
+  const top_five_factorizations = prime_factorizations
+    .slice(-5)
+    .sort((a, b) => b.number - a.number);
+
+  // print top_five_factorizations as a vertical list with number and factorization
+  canvasContext.fillStyle = "white";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(`Top 5 prime factorizations:`, 50, 20);
+  top_five_factorizations.forEach((item, index) => {
+    canvasContext.fillStyle = "lightblue";
+    canvasContext.font = "8px Arial";
+    canvasContext.fillText(
+      `${item.number}: ${item.factorization}`,
+      50,
+      30 + index * 8,
+    );
+  });
 }
+
+filtered_candidates = candidates.filter(
+  (candidate) => !primes.includes(candidate),
+);
 
 // game loop?
 function game_loop() {
-
   update();
   render();
 
@@ -204,11 +273,14 @@ game_loop();
 
 // function things
 function draw_time_stats() {
-
   // show draw_target_time
   canvasContext.fillStyle = "black";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Draw target time: ${draw_time_target.toFixed(2)} ms`, 10, 60);
+  canvasContext.fillText(
+    `Draw target time: ${draw_time_target.toFixed(2)} ms`,
+    10,
+    60,
+  );
 
   // show draw count
   canvasContext.fillStyle = "black";
@@ -223,29 +295,63 @@ function draw_time_stats() {
   // format current time as a human-readable string
   canvasContext.fillStyle = "black";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Current time: ${new Date(current_time).toLocaleTimeString()}`, 10, 45);
-
+  canvasContext.fillText(
+    `Current time: ${new Date(current_time).toLocaleTimeString()}`,
+    10,
+    45,
+  );
 }
 
-
 function step_primes() {
-
   // get max candidate
   const max_candidate = Math.max(...candidates);
   const new_candidate = max_candidate + 1;
 
   // add multiples
   const self = max_candidate * max_candidate;
-  primes.map(prime => prime * max_candidate).forEach(multiple => multiples.push(multiple));
+  primes
+    .map((prime) => prime * max_candidate)
+    .forEach((multiple) => multiples.push(multiple));
   multiples.push(self);
 
   // filter primes
   if (!multiples.includes(max_candidate)) {
     primes.push(max_candidate);
+  } else {
+    filtered_candidates.push(max_candidate);
+
+    // generate prime factorization for max_candidate
+    const prime_factors = [];
+    let remaining = max_candidate;
+
+    for (const prime of primes) {
+      while (remaining % prime === 0) {
+        prime_factors.push(prime);
+        remaining /= prime;
+      }
+      if (remaining === 1) break;
+    }
+
+    // generate prime factorization string
+
+    // get duplicate counts for prime factors
+    const factor_counts = {};
+    prime_factors.forEach((factor) => {
+      factor_counts[factor] = (factor_counts[factor] || 0) + 1;
+    });
+
+    // create prime factorization string with exponents
+    prime_factorization = Object.entries(factor_counts)
+      .map(([factor, count]) => (count > 1 ? `${factor}^${count}` : factor))
+      .join(" × ");
+
+    prime_factorizations.push({
+      number: max_candidate,
+      factorization: prime_factorization,
+    });
   }
 
   // todo: factorization list
-
 
   // increment candidates
   candidates.push(new_candidate);
@@ -257,4 +363,3 @@ function draw_fps(x = 10, y = 75) {
   canvasContext.font = "8px Arial";
   canvasContext.fillText(`FPS: ${fps}`, x, y);
 }
-
