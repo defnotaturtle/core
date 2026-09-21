@@ -1,6 +1,3 @@
-const canvas = document.getElementById("gameCanvas");
-const canvasContext = canvas.getContext("2d");
-
 const keys = {};
 const pressedOnce = {};
 
@@ -8,6 +5,34 @@ const progressBarWidth = 100;
 const progressBarHeight = 10;
 const progressBarX = 120;
 const progressBarY = 130;
+
+const canvas = document.getElementById("gameCanvas");
+const canvasContext = canvas.getContext("2d");
+
+const game_width = 256;
+const game_height = 256;
+
+function resizeCanvas() {
+  const pixelRatio = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+  const scale = Math.max(
+    1,
+    Math.min(
+      Math.floor(window.innerWidth / game_width),
+      Math.floor(window.innerHeight / game_height),
+    ),
+  );
+
+  canvas.width = game_width * pixelRatio;
+  canvas.height = game_height * pixelRatio;
+  canvas.style.width = `${game_width * scale}px`;
+  canvas.style.height = `${game_height * scale}px`;
+
+  canvasContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  canvasContext.imageSmoothingEnabled = false;
+}
+
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
 window.addEventListener("keydown", (event) => {
   const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
@@ -36,11 +61,12 @@ window.addEventListener("keyup", (event) => {
 const target_frame_rate = 60;
 const draw_time_target = 1000 / target_frame_rate;
 const table_flip = "(╯°□°)╯︵ ┻━┻";
+const put_it_back = '┬─┬ノ( º _ ºノ)';
 const prime_upgrade = 0.85;
 
 let prime_factorization = "";
 let delta_accumulator = 0;
-let prime_update_speed = 500; // ms
+let prime_update_speed = 100; // ms
 
 let prime_factorizations = [];
 let candidates = [2];
@@ -135,10 +161,16 @@ function render() {
   canvasContext.fillStyle = "lightblue";
   canvasContext.fillRect(10, 10, 20, 20);
 
-  // draw table flip
+  // todo: animate between flip and put it back
   canvasContext.fillStyle = "white";
   canvasContext.font = "10px Arial";
   canvasContext.fillText(table_flip, 10, 240);
+
+  // draw put_it_back
+  canvasContext.fillStyle = "white";
+  canvasContext.font = "10px Arial";
+  canvasContext.fillText(put_it_back, 110, 240);
+
 
   // print top five candidates in descending order
   const topFiveCandidates = candidates.slice(-5).sort((a, b) => b - a);

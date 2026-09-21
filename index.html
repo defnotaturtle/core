@@ -4,11 +4,7 @@
   <meta charset="utf-8">
   <title>Canvas Test</title>
   <style>
-    :root {
-      --canvas-width: 128;
-      --canvas-height: 128;
-      --pixel-scale: 4;
-    }
+
 
     * { box-sizing: border-box; }
 
@@ -24,17 +20,16 @@
 
     canvas {
       display: block;
-      width: calc(var(--canvas-width) * var(--pixel-scale) * 1px);
-      height: calc(var(--canvas-height) * var(--pixel-scale) * 1px);
       border: 2px dashed #666;
       background: #000;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
     }
   </style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="256" height="256"></canvas>
+  <canvas id="gameCanvas"></canvas>
 
   <script src="main.js"></script>
 </body>
