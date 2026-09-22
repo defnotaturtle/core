@@ -1,4 +1,4 @@
-import { composite_magnitude, delta_time, filtered_candidates, prime_factorization, prime_magnitude, prime_update_speed, primes, primes_found_per_second, progress_bar, progressBarHeight, progressBarWidth, progressBarX, progressBarY, put_it_back, reset_count, table_flip, top_five_candidates, top_five_factorizations_by_sequence, top_five_primes } from "./main.js";
+import { composite_magnitude, current_time, delta_time, draw_count, draw_time_target, filtered_candidates, prime_factorization, prime_magnitude, prime_update_speed, primes, primes_found_per_second, progress_bar, progressBarHeight, progressBarWidth, progressBarX, progressBarY, put_it_back, reset_count, table_flip, top_five_candidates, top_five_factorizations_by_magnitude, top_five_factorizations_by_sequence, top_five_primes } from "./main.js";
 
 export const game_width = 256;
 export const game_height = 256;
@@ -149,12 +149,13 @@ export function render() {
   canvasContext.font = "12px Arial";
   canvasContext.fillText(`${prime_magnitude}`, 120, 200);
 
+  // composite
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Composite magnitude:`, 150, 50);
+  canvasContext.fillText(`Composite magnitude:`, 150, 100);
   canvasContext.fillStyle = "lightblue";
   canvasContext.font = "12px Arial";
-  canvasContext.fillText(`${composite_magnitude}`, 185, 70);
+  canvasContext.fillText(`${composite_magnitude}`, 185, 120);
 
   // print prime_factorization
   canvasContext.fillStyle = "white";
@@ -168,15 +169,60 @@ export function render() {
   // print top_five_factorizations as a vertical list with number and factorization
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Top 5 prime factorizations:`, 50, 20);
+  canvasContext.fillText(`Top 5 prime factorizations:`, 50, 30);
   top_five_factorizations_by_sequence.forEach((item, index) => {
     canvasContext.fillStyle = "lightblue";
     canvasContext.font = "8px Arial";
     canvasContext.fillText(
       `${item.number}: ${item.factorization}`,
       50,
-      30 + index * 8
+      40 + index * 8
     );
   });
+
+  // print top_five_factorizations as a vertical list with number and factorization
+  canvasContext.fillStyle = "white";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(`Top 5 by magnitude:`, 150, 30);
+  top_five_factorizations_by_magnitude.forEach((item, index) => {
+    canvasContext.fillStyle = "lightblue";
+    canvasContext.font = "8px Arial";
+    canvasContext.fillText(
+      `${item.number}: ${item.factorization}`,
+      150,
+      40 + index * 8
+    );
+  });
+  
+}
+// function things
+function draw_time_stats() {
+  // show draw_target_time
+  canvasContext.fillStyle = "black";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(
+    `Draw target time: ${draw_time_target.toFixed(2)} ms`,
+    10,
+    60
+  );
+
+  // show draw count
+  canvasContext.fillStyle = "black";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(`Draw count: ${draw_count}`, 10, 30);
+
+  // draw delta time
+  canvasContext.fillStyle = "black";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(`Delta time: ${delta_time.toFixed(2)} ms`, 10, 15);
+
+  // format current time as a human-readable string
+  canvasContext.fillStyle = "black";
+  canvasContext.font = "8px Arial";
+  canvasContext.fillText(
+    `Current time: ${new Date(current_time).toLocaleTimeString()}`,
+    10,
+    45
+  );
 }
 

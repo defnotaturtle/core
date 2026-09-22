@@ -1,5 +1,5 @@
 import { init, pressedOnce } from "./init.js";
-import { canvasContext, render } from "./render.js";
+import { render } from "./render.js";
 
 export const progressBarWidth = 100;
 export const progressBarHeight = 10;
@@ -7,7 +7,7 @@ export const progressBarX = 120;
 export const progressBarY = 130;
 
 const target_frame_rate = 60;
-const draw_time_target = 1000 / target_frame_rate;
+export const draw_time_target = 1000 / target_frame_rate;
 export const table_flip = "(╯°□°)╯︵ ┻━┻";
 export const put_it_back = "┬─┬ノ( º _ ºノ)";
 const prime_upgrade = 0.85;
@@ -17,6 +17,7 @@ export let primes_found_per_second = 0;
 export let top_five_candidates = [];
 export let top_five_primes = [];
 export let top_five_factorizations_by_sequence = [];
+export let top_five_factorizations_by_magnitude = [];
 export let prime_factorization = "";
 let delta_accumulator = 0;
 export let prime_update_speed = 800; // ms
@@ -27,9 +28,9 @@ export let primes = [];
 export let filtered_candidates = [];
 export let prime_magnitude = 0;
 export let composite_magnitude = 0;
-let draw_count = 0;
+export let draw_count = 0;
 let last_draw_time = performance.now();
-let current_time = Date.now();
+export let current_time = Date.now();
 export let reset_count = 0;
 export let progress_bar = 0;
 
@@ -39,6 +40,16 @@ init();
 filtered_candidates = candidates.filter(
   (candidate) => !primes.includes(candidate),
 );
+
+function game_loop() {
+  update();
+  render();
+
+  requestAnimationFrame(game_loop);
+}
+
+// starts game loop
+game_loop();
 
 function update() {
   // keyboard input to reset to default values
@@ -53,9 +64,15 @@ function update() {
 
   top_five_factorizations_by_sequence = prime_factorizations
     .slice(-5)
-    .sort((a, b) => b.number - a.number);
+    .sort((first, second) => second.number - first.number);
 
-    
+  top_five_factorizations_by_magnitude = prime_factorizations
+    .sort(
+      (first, second) =>
+        second.magnitude - first.magnitude || second.number - first.number,
+    )
+    .slice(0, 5);
+
   // draw/update count
   draw_count++;
   current_time = Date.now();
@@ -79,74 +96,6 @@ function update() {
 
   // update prime speed progress bar
   progress_bar = (delta_accumulator / prime_update_speed) * progressBarWidth;
-}
-
-function reset() {
-  if (prime_magnitude > reset_count) {
-    candidates = [2];
-    multiples = [];
-    primes = [];
-    filtered_candidates = [];
-    prime_factorizations = [];
-
-    draw_count = 0;
-    last_draw_time = performance.now();
-    current_time = Date.now();
-    delta_time = 0;
-
-    // reset primes_found_per_second
-    primes_found_per_second = 0;
-
-    //
-    reset_count = reset_count + 1;
-    prime_update_speed = prime_update_speed * prime_upgrade;
-
-    // reset progress bar
-    // todo: sync this properly with cycle reset
-    progress_bar = 0;
-  }
-}
-
-// game loop?
-function game_loop() {
-  update();
-  render();
-
-  requestAnimationFrame(game_loop);
-}
-
-// starts game loop
-game_loop();
-
-// function things
-function draw_time_stats() {
-  // show draw_target_time
-  canvasContext.fillStyle = "black";
-  canvasContext.font = "8px Arial";
-  canvasContext.fillText(
-    `Draw target time: ${draw_time_target.toFixed(2)} ms`,
-    10,
-    60,
-  );
-
-  // show draw count
-  canvasContext.fillStyle = "black";
-  canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Draw count: ${draw_count}`, 10, 30);
-
-  // draw delta time
-  canvasContext.fillStyle = "black";
-  canvasContext.font = "8px Arial";
-  canvasContext.fillText(`Delta time: ${delta_time.toFixed(2)} ms`, 10, 15);
-
-  // format current time as a human-readable string
-  canvasContext.fillStyle = "black";
-  canvasContext.font = "8px Arial";
-  canvasContext.fillText(
-    `Current time: ${new Date(current_time).toLocaleTimeString()}`,
-    10,
-    45,
-  );
 }
 
 function step_primes() {
@@ -199,13 +148,38 @@ function step_primes() {
     prime_factorizations.push({
       number: max_candidate,
       factorization: prime_factorization,
+      magnitude: magnitude,
     });
 
     composite_magnitude = Math.max(composite_magnitude, magnitude);
   }
 
-  // todo: factorization list
-
   // increment candidates
   candidates.push(new_candidate);
+}
+
+function reset() {
+  if (prime_magnitude > reset_count) {
+    candidates = [2];
+    multiples = [];
+    primes = [];
+    filtered_candidates = [];
+    prime_factorizations = [];
+
+    draw_count = 0;
+    last_draw_time = performance.now();
+    current_time = Date.now();
+    delta_time = 0;
+
+    // reset primes_found_per_second
+    primes_found_per_second = 0;
+
+    // reset progress bar
+    // todo: sync this properly with cycle reset
+    progress_bar = 0;
+
+    //
+    reset_count = reset_count + 1;
+    prime_update_speed = prime_update_speed * prime_upgrade;
+  }
 }
