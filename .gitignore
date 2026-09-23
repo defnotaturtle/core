@@ -1,0 +1,31 @@
+# .NET build output
+**/bin/
+**/obj/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.rsuser
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Test results and coverage
+TestResults/
+coverage/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*~
