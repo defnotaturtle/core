@@ -1,9 +1,33 @@
-import { composite_magnitude, current_time, delta_time, draw_count, draw_time_target, filtered_candidates, prime_factorization, prime_magnitude, prime_update_speed, primes, primes_found_per_second, progress_bar, progressBarHeight, progressBarWidth, progressBarX, progressBarY, put_it_back, reset_count, table_flip, top_five_candidates, top_five_factorizations_by_magnitude, top_five_factorizations_by_sequence, top_five_primes } from "./main.js";
+import {
+  composite_magnitude,
+  current_time,
+  delta_time,
+  draw_count,
+  draw_time_target,
+  filtered_candidates,
+  prime_factorization,
+  prime_magnitude,
+  prime_update_speed,
+  primes,
+  primes_found_per_second,
+  progress_bar,
+  progressBarHeight,
+  progressBarWidth,
+  progressBarX,
+  progressBarY,
+  put_it_back,
+  reset_count,
+  table_flip,
+  top_five_candidates,
+  top_five_factorizations_by_magnitude,
+  top_five_factorizations_by_sequence,
+  top_five_primes,
+} from "./main.js";
 
-export const game_width = 256;
-export const game_height = 256;
-export const canvas = document.getElementById("gameCanvas");
-export const canvasContext = canvas.getContext("2d");
+const game_width = 256;
+const game_height = 256;
+const canvas = document.getElementById("gameCanvas");
+const canvasContext = canvas.getContext("2d");
 
 export function resizeCanvas() {
   const pixelRatio = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
@@ -11,19 +35,19 @@ export function resizeCanvas() {
     1,
     Math.min(
       Math.floor(window.innerWidth / game_width),
-      Math.floor(window.innerHeight / game_height)
-    )
+      Math.floor(window.innerHeight / game_height),
+    ),
   );
-  
+
   canvas.width = game_width * pixelRatio;
   canvas.height = game_height * pixelRatio;
   canvas.style.width = `${game_width * scale}px`;
   canvas.style.height = `${game_height * scale}px`;
-  
+
   canvasContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
   canvasContext.imageSmoothingEnabled = false;
-  
-}export function draw_fps(x = 10, y = 75) {
+}
+function draw_fps(x = 10, y = 75) {
   const fps = (1000 / delta_time).toFixed(2);
   canvasContext.fillStyle = "white";
   canvasContext.font = "8px Arial";
@@ -39,7 +63,7 @@ export function render() {
   canvasContext.fillText(
     `Delta time: ${delta_time.toFixed(2)} ms`,
     canvas.width - 80,
-    20
+    20,
   );
 
   // draw FPS / time stats
@@ -66,7 +90,7 @@ export function render() {
   canvasContext.fillText(
     `Top 5 candidates: ${top_five_candidates.join(", ")}`,
     10,
-    80
+    80,
   );
 
   // print top five primes in descending order
@@ -75,7 +99,7 @@ export function render() {
   canvasContext.fillText(
     `Top 5 primes: ${top_five_primes.join(", ")}`,
     10,
-    100
+    100,
   );
 
   // print reset count
@@ -89,7 +113,7 @@ export function render() {
   canvasContext.fillText(
     `Prime update speed: ${(prime_update_speed / 1000).toFixed(2)} s`,
     10,
-    140
+    140,
   );
 
   // display progress bar for prime update speed
@@ -98,21 +122,21 @@ export function render() {
     progressBarX,
     progressBarY,
     progressBarWidth,
-    progressBarHeight
+    progressBarHeight,
   );
   canvasContext.fillStyle = "lightblue";
   canvasContext.fillRect(
     progressBarX,
     progressBarY,
     progress_bar,
-    progressBarHeight
+    progressBarHeight,
   );
   canvasContext.strokeStyle = "white";
   canvasContext.strokeRect(
     progressBarX,
     progressBarY,
     progressBarWidth,
-    progressBarHeight
+    progressBarHeight,
   );
 
   // print first 5 primes
@@ -121,7 +145,7 @@ export function render() {
   canvasContext.fillText(
     `First 5 primes: ${primes.slice(0, 5).join(", ")}`,
     10,
-    130
+    130,
   );
 
   // print prime count
@@ -138,7 +162,7 @@ export function render() {
   canvasContext.fillText(
     `Primes found per second: ${primes_found_per_second}`,
     10,
-    180
+    180,
   );
 
   // print prime magnitude - digit count of largest found prime
@@ -163,7 +187,7 @@ export function render() {
   canvasContext.fillText(
     `Prime factorization of ${Math.max(...filtered_candidates)}: ${prime_factorization}`,
     10,
-    220
+    220,
   );
 
   // print top_five_factorizations as a vertical list with number and factorization
@@ -176,7 +200,7 @@ export function render() {
     canvasContext.fillText(
       `${item.number}: ${item.factorization}`,
       50,
-      40 + index * 8
+      40 + index * 8,
     );
   });
 
@@ -190,10 +214,9 @@ export function render() {
     canvasContext.fillText(
       `${item.number}: ${item.factorization}`,
       150,
-      40 + index * 8
+      40 + index * 8,
     );
   });
-  
 }
 // function things
 function draw_time_stats() {
@@ -203,7 +226,7 @@ function draw_time_stats() {
   canvasContext.fillText(
     `Draw target time: ${draw_time_target.toFixed(2)} ms`,
     10,
-    60
+    60,
   );
 
   // show draw count
@@ -222,7 +245,6 @@ function draw_time_stats() {
   canvasContext.fillText(
     `Current time: ${new Date(current_time).toLocaleTimeString()}`,
     10,
-    45
+    45,
   );
 }
-
