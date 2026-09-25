@@ -40,21 +40,93 @@ const App = () => {
 
   // local state
   const [count, setCount] = useState(0);
+  const [candidates, setCandidates] = useState([2]);
+  const [primes, setPrimes] = useState([2]);
+  const [multiples, setMultiples] = useState([]);
+  const [max_candidate, set_max_candidate] = useState(2);
+  const [new_candidate, set_new_candidate] = useState(0);
+
+  const step_primes = () => {
+
+    // get max candidate
+    set_max_candidate(Math.max(...candidates));
+    set_new_candidate(max_candidate + 1);
+
+    // // add multiples
+    const self = max_candidate * max_candidate;
+
+    primes
+      .map((prime) => prime * max_candidate)
+      .forEach((multiple) => setMultiples(...multiples, multiple));
+    //multiples.push(self);
+    setMultiples(...multiples, self);
+
+    // // filter primes
+    // if (!multiples.includes(max_candidate)) {
+    //   primes.push(max_candidate);
+    // } else {
+    //   filtered_candidates.push(max_candidate);
+
+    //   // generate prime factorization for max_candidate
+    //   const prime_factors = [];
+    //   let remaining = max_candidate;
+
+    //   for (const prime of primes) {
+    //     while (remaining % prime === 0) {
+    //       prime_factors.push(prime);
+    //       remaining /= prime;
+    //     }
+    //     if (remaining === 1) break;
+    //   }
+
+    //   // generate prime factorization string
+
+    //   // get duplicate counts for prime factors
+    //   let factor_counts = [];
+    //   prime_factors.forEach((factor) => {
+    //     factor_counts[factor] = (factor_counts[factor] || 0) + 1;
+    //   });
+
+    //   let magnitude = 0;
+    //   // create prime factorization string with exponents
+    //   prime_factorization = Object.entries(factor_counts)
+    //     .map(([factor, count]) => {
+    //       magnitude += 1;
+    //       return count > 1 ? `${factor}^${count}` : factor;
+    //     })
+    //     .join(" × ");
+
+    //   prime_factorizations.push({
+    //     number: max_candidate,
+    //     factorization: prime_factorization,
+    //     magnitude: magnitude,
+    //   });
+
+    //   composite_magnitude = Math.max(composite_magnitude, magnitude);
+    // }
+
+    // // increment candidates
+    // candidates.push(new_candidate);
+    setCandidates((currentCandidates) => [...currentCandidates, new_candidate]);
+
+  }
+
 
   // setup game_loop via requestAnimationFrame
   useEffect(() => {
     let frameId;
 
     const animate = () => {
-      
-      step_primes();      
+
+      step_primes();
+      // setCount((count) => count + 1);   
       frameId = requestAnimationFrame(animate);
     };
 
     frameId = requestAnimationFrame(animate);
 
     return () => cancelAnimationFrame(frameId);
-  }, []);  
+  }, []);
 
   return (
     <>
@@ -65,72 +137,14 @@ const App = () => {
       >
         Count is {count}
       </button>
+
+      <div>
+        {candidates.slice(0,5).map((candidate, index) => (
+          <div key={index}>{candidate}</div>
+        ))}
+      </div>
     </>
   );
 };
-
-const step_primes = () => {
-  
-  
-  
-  // // get max candidate
-  // const max_candidate = Math.max(...candidates);
-  // const new_candidate = max_candidate + 1;
-
-  // // add multiples
-  // const self = max_candidate * max_candidate;
-  // primes
-  //   .map((prime) => prime * max_candidate)
-  //   .forEach((multiple) => multiples.push(multiple));
-  // multiples.push(self);
-
-  // // filter primes
-  // if (!multiples.includes(max_candidate)) {
-  //   primes.push(max_candidate);
-  // } else {
-  //   filtered_candidates.push(max_candidate);
-
-  //   // generate prime factorization for max_candidate
-  //   const prime_factors = [];
-  //   let remaining = max_candidate;
-
-  //   for (const prime of primes) {
-  //     while (remaining % prime === 0) {
-  //       prime_factors.push(prime);
-  //       remaining /= prime;
-  //     }
-  //     if (remaining === 1) break;
-  //   }
-
-  //   // generate prime factorization string
-
-  //   // get duplicate counts for prime factors
-  //   let factor_counts = [];
-  //   prime_factors.forEach((factor) => {
-  //     factor_counts[factor] = (factor_counts[factor] || 0) + 1;
-  //   });
-
-  //   let magnitude = 0;
-  //   // create prime factorization string with exponents
-  //   prime_factorization = Object.entries(factor_counts)
-  //     .map(([factor, count]) => {
-  //       magnitude += 1;
-  //       return count > 1 ? `${factor}^${count}` : factor;
-  //     })
-  //     .join(" × ");
-
-  //   prime_factorizations.push({
-  //     number: max_candidate,
-  //     factorization: prime_factorization,
-  //     magnitude: magnitude,
-  //   });
-
-  //   composite_magnitude = Math.max(composite_magnitude, magnitude);
-  // }
-
-  // // increment candidates
-  // candidates.push(new_candidate);
-
-}
 
 export default App;
